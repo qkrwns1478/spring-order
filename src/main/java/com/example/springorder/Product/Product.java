@@ -1,11 +1,9 @@
 package com.example.springorder.Product;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Setter
-@Getter
+@Setter @Getter
 @Entity
 @Table(name = "products")
 public class Product {
@@ -17,9 +15,9 @@ public class Product {
     private int price;
     private int quantity;
 
-    public Product() {
-    }
+    public Product() {}
 
+    @Builder
     public Product(Long id, String name, int price, int quantity) {
         this.id = id;
         this.name = name;

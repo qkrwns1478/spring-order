@@ -46,6 +46,15 @@ public class ProductController {
         return productRepository.save(new_product);
     }
 
+    /* 상품 이름 변경 */
+    @PatchMapping("/{id}")
+    public Product changeName(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
+        Product new_product = productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        new_product.setName(productRequest.getName());
+        return productRepository.save(new_product);
+    }
+
     /* 상품 삭제 */
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
