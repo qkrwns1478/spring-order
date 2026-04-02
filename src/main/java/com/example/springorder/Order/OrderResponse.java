@@ -12,4 +12,8 @@ public class OrderResponse {
         this.id = id;
         this.productName = name;
     }
+
+    public static OrderResponse from(Order order) {
+        return new OrderResponse(order.getId(), order.getProduct().getName());
+    }
 }
