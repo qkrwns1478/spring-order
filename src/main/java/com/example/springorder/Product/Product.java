@@ -14,6 +14,7 @@ public class Product {
     private String name;
     private int price;
     private int stock;
+    private boolean isDeleted;
 
     public Product() {}
 
@@ -23,6 +24,7 @@ public class Product {
         this.name = name;
         this.price = price;
         this.stock = stock;
+        this.isDeleted = false;
     }
 
 }

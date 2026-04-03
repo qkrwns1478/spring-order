@@ -1,8 +1,6 @@
 package com.example.springorder.Product;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -10,65 +8,51 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     /* 상품 등록 */
     @PostMapping
     public Product create(@RequestBody Product product) {
-        return productRepository.save(product);
+        return productService.create(product);
     }
 
     /* 상품 목록 조회 */
     @GetMapping
     public List<Product> findAll() {
-        return productRepository.findAll();
+        return productService.findAll();
     }
 
     /* 상품 단건 조회 */
     @GetMapping("/{id}")
     public Product findById(@PathVariable Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return productService.findById(id);
     }
 
     /* 상품 수정 */
     @PutMapping("/{id}")
     public Product update(@PathVariable Long id, @RequestBody Product product) {
-        Product new_product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        new_product.setName(product.getName());
-        new_product.setPrice(product.getPrice());
-        new_product.setStock(product.getStock());
-        return productRepository.save(new_product);
+        return productService.update(id, product);
     }
 
     /* 상품 이름 변경 */
     @PatchMapping("/{id}/name")
     public Product changeName(@PathVariable Long id, @RequestBody ChangeNameRequest changeNameRequest) {
-        Product new_product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        new_product.setName(changeNameRequest.getName());
-        return productRepository.save(new_product);
+        return productService.changeName(id, changeNameRequest);
     }
 
     /* 상품 재고 변경 */
     @PatchMapping("/{id}/stock")
     public Product changeStock(@PathVariable Long id, @RequestBody ChangeStockRequest changeStockRequest) {
-        Product new_product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        new_product.setStock(changeStockRequest.getStock());
-        return productRepository.save(new_product);
+        return productService.changeStock(id, changeStockRequest);
     }
 
     /* 상품 삭제 */
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
-        Product target_product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        productRepository.delete(target_product);
+    public Product deleteById(@PathVariable Long id) {
+        return productService.deleteById(id);
     }
 }
