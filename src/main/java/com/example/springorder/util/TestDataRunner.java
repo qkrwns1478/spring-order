@@ -37,9 +37,9 @@
 //        Product product = new Product();
 //        product.setName(name);
 //        int price = getRandomNumber(100, 10000);
-//        int quantity = getRandomNumber(100, 10000);
+//        int stock = getRandomNumber(100, 10000);
 //        product.setPrice(price);
-//        product.setQuantity(quantity);
+//        product.setStock(stock);
 //        productRepository.save(product);
 //    }
 //

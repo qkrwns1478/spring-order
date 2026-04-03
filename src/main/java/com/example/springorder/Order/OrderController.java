@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,10 +25,18 @@ public class OrderController {
     }
 
     /* 주문 등록 */
+    @Transactional
     @PostMapping
     public Order create(@RequestBody OrderRequest orderRequest) {
-        Product product = productRepository.findById(orderRequest.getProductId())
+        Product product = productRepository.findByIdForUpdate(orderRequest.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        int stock = product.getStock();
+        if (stock <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        product.setStock(stock - 1);
+
         Order order = Order.builder().product(product).build();
         return orderRepository.save(order);
     }

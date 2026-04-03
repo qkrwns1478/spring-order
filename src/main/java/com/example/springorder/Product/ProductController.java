@@ -42,16 +42,25 @@ public class ProductController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         new_product.setName(product.getName());
         new_product.setPrice(product.getPrice());
-        new_product.setQuantity(product.getQuantity());
+        new_product.setStock(product.getStock());
         return productRepository.save(new_product);
     }
 
     /* 상품 이름 변경 */
-    @PatchMapping("/{id}")
-    public Product changeName(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
+    @PatchMapping("/{id}/name")
+    public Product changeName(@PathVariable Long id, @RequestBody ChangeNameRequest changeNameRequest) {
         Product new_product = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        new_product.setName(productRequest.getName());
+        new_product.setName(changeNameRequest.getName());
+        return productRepository.save(new_product);
+    }
+
+    /* 상품 재고 변경 */
+    @PatchMapping("/{id}/stock")
+    public Product changeStock(@PathVariable Long id, @RequestBody ChangeStockRequest changeStockRequest) {
+        Product new_product = productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        new_product.setStock(changeStockRequest.getStock());
         return productRepository.save(new_product);
     }
 

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>spring-order 동시 주문 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 0 16px;
+            line-height: 1.5;
+        }
+        input, button {
+            font-size: 16px;
+            padding: 8px 12px;
+            margin-right: 8px;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+<h1>동시 주문 요청 테스트</h1>
+
+<div>
+    <label for="baseUrl">서버 주소</label>
+    <input id="baseUrl" type="text" value="http://localhost:8080" />
+</div>
+
+<div style="margin-top: 12px;">
+    <label for="productId">상품 ID</label>
+    <input id="productId" type="number" value="1" min="1" />
+    <button id="sendBtn">POST /orders 2번 동시에 보내기</button>
+</div>
+
+<h2>결과</h2>
+<pre id="result">아직 요청하지 않았습니다.</pre>
+
+<script>
+    const sendBtn = document.getElementById("sendBtn");
+    const result = document.getElementById("result");
+    const baseUrlInput = document.getElementById("baseUrl");
+    const productIdInput = document.getElementById("productId");
+
+    async function createOrder(baseUrl, productId) {
+        const response = await fetch(`${baseUrl}/orders`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                productId: productId
+            })
+        });
+
+        let body;
+        try {
+            body = await response.json();
+        } catch {
+            body = await response.text();
+        }
+
+        return {
+            ok: response.ok,
+            status: response.status,
+            body
+        };
+    }
+
+    sendBtn.addEventListener("click", async () => {
+        const baseUrl = baseUrlInput.value.trim();
+        const productId = Number(productIdInput.value);
+
+        result.textContent = "요청 중...";
+
+        try {
+            const [res1, res2] = await Promise.all([
+                createOrder(baseUrl, productId),
+                createOrder(baseUrl, productId)
+            ]);
+
+            result.textContent = JSON.stringify(
+                {
+                    requestedAt: new Date().toISOString(),
+                    requestBody: { productId },
+                    firstResponse: res1,
+                    secondResponse: res2
+                },
+                null,
+                2
+            );
+        } catch (error) {
+            result.textContent = `에러 발생: ${error.message}`;
+        }
+    });
+</script>
+</body>
+</html>

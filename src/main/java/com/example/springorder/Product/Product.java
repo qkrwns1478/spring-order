@@ -13,16 +13,16 @@ public class Product {
 
     private String name;
     private int price;
-    private int quantity;
+    private int stock;
 
     public Product() {}
 
     @Builder
-    public Product(Long id, String name, int price, int quantity) {
+    public Product(Long id, String name, int price, int stock) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
+        this.stock = stock;
     }
 
 }
